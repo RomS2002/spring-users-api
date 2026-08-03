@@ -3,7 +3,6 @@ package ru.roms2002.springusersapi.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import ru.roms2002.springusersapi.entity.User;
 import ru.roms2002.springusersapi.exception.UserNotFoundException;
 import ru.roms2002.springusersapi.repository.UserRepository;
