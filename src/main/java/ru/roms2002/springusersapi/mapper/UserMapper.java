@@ -5,6 +5,8 @@ import ru.roms2002.springusersapi.dto.CreateUserRequest;
 import ru.roms2002.springusersapi.dto.UserResponse;
 import ru.roms2002.springusersapi.entity.User;
 
+import java.util.List;
+
 @Component
 public class UserMapper {
 
@@ -26,5 +28,12 @@ public class UserMapper {
         user.setBirthDate(userRequest.getBirthDate());
         user.setCreatedAt(null);
         return user;
+    }
+
+    public List<UserResponse> toResponseList(List<User> users) {
+        return users
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }

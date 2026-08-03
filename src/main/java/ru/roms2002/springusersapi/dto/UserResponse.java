@@ -19,5 +19,4 @@ public class UserResponse {
     private String email;
     private LocalDate birthDate;
     private LocalDateTime createdAt;
-
 }
