@@ -38,7 +38,8 @@ src
 ├── exception
 ├── repository
 ├── service
-└── config
+├── config
+└── mapper
 ```
 
 ## Статус проекта
