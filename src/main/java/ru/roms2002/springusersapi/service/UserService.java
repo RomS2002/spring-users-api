@@ -42,6 +42,10 @@ public class UserService {
             throw new IllegalArgumentException("User id must not be null");
         }
 
+        if (!repository.existsById(id)) {
+            throw new UserNotFoundException(id);
+        }
+
         repository.deleteById(id);
     }
 }
