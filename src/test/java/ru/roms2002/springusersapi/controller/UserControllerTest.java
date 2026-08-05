@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import ru.roms2002.springusersapi.dto.CreateUserRequest;
 import ru.roms2002.springusersapi.entity.User;
 import ru.roms2002.springusersapi.exception.UserNotFoundException;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -142,6 +144,7 @@ public class UserControllerTest {
         );
         when(userService.create(any(User.class))).thenReturn(created);
 
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -161,6 +164,52 @@ public class UserControllerTest {
         assertEquals("Roman", actual.getName());
         assertEquals("romsyt2002@gmail.com", actual.getEmail());
         assertEquals(LocalDate.of(2002, 6, 19), actual.getBirthDate());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenEmailIsInvalid() throws Exception {
+
+        CreateUserRequest request = new CreateUserRequest(
+                "Roman",
+                "romsyt2002#gmail.com",
+                LocalDate.of(2002, 6, 19)
+        );
+
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.email").value("Email is invalid"))
+                .andExpect(jsonPath("$.timestamp").exists());
+
+        verifyNoInteractions(userService);
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenMultipleFieldsAreInvalid() throws Exception {
+
+        CreateUserRequest request = new CreateUserRequest(
+                " ",
+                "romsyt2002#gmail.com",
+                LocalDate.now().plusDays(1)
+        );
+
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.name").value("Name must not be blank"))
+                .andExpect(jsonPath("$.errors.email").value("Email is invalid"))
+                .andExpect(jsonPath("$.errors.birthDate").value("Birth date must be in the past"))
+                .andExpect(jsonPath("$.timestamp").exists());
+
+        verifyNoInteractions(userService);
     }
 
     @Test

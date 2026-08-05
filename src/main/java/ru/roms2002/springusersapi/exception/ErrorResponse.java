@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -14,5 +15,6 @@ import java.time.LocalDateTime;
 public class ErrorResponse {
 
     private String message;
+    private Map<String, String> errors;
     private LocalDateTime timestamp;
 }

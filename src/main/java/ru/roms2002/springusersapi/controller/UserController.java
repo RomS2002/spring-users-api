@@ -1,5 +1,6 @@
 package ru.roms2002.springusersapi.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import ru.roms2002.springusersapi.dto.CreateUserRequest;
 import ru.roms2002.springusersapi.dto.UserResponse;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponse create(@RequestBody CreateUserRequest request) {
+    public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
         User user = userMapper.toEntity(request);
         User created = userService.create(user);
         return userMapper.toResponse(created);
